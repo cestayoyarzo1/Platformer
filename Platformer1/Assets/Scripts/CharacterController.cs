@@ -7,12 +7,13 @@ using UnityEngine;
 public class CharacterController : MonoBehaviour
 {
     [SerializeField]
-    float speed, movement, deltaMove, force;
+    float speed, movement, deltaMove, force, rotationSpeed;
 
     enum CharacterState
     {
         Idle,
-        Running,
+        RunningForward,
+        RunningBack,
         Jumping
     }
     CharacterState mainstate = CharacterState.Idle;
@@ -47,8 +48,16 @@ public class CharacterController : MonoBehaviour
             case CharacterState.Idle:
                 break;
 
-            case CharacterState.Running:
+            case CharacterState.RunningForward:
+                transform.localRotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 90, 0), rotationSpeed * Time.deltaTime);
                 transform.Translate(Vector3.forward * speed * movement * Time.deltaTime);
+                transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+                break;
+
+            case CharacterState.RunningBack:
+                transform.localRotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, -90, 0), rotationSpeed * Time.deltaTime);
+                transform.Translate(-Vector3.forward * speed * movement * Time.deltaTime);
+                transform.position = new Vector3(transform.position.x, transform.position.y, 0);
                 break;
 
             case CharacterState.Jumping:
@@ -73,12 +82,25 @@ public class CharacterController : MonoBehaviour
 
     void Run()
     {
-        if(mainstate != CharacterState.Running)
+        if(movement > 0)
         {
-            mainstate = CharacterState.Running;
-            animatorController.SetBool("Run", true);
-            animatorController.SetBool("Stop", false);
+            if (mainstate != CharacterState.RunningForward)
+            {
+                mainstate = CharacterState.RunningForward;
+                animatorController.SetBool("Run", true);
+                animatorController.SetBool("Stop", false);
+            }
         }
+        else if ((movement < 0))
+        {
+            if (mainstate != CharacterState.RunningBack)
+            {
+                mainstate = CharacterState.RunningBack;
+                animatorController.SetBool("Run", true);
+                animatorController.SetBool("Stop", false);
+            }
+        }
+
 
     }
 }
