@@ -53,8 +53,9 @@ public class SerialHandler : MonoBehaviour
     {
         command = System.Text.Encoding.UTF8.GetString(array, 0, array.Length);
         print(command);
+        //EventManager.Instance.InvokeNative("onBoardInteraction", gameObject, new CustomEventArgs(command));
+        EventManager.Instance.onBoardInteraction.Invoke(gameObject, new CustomEventArgs(command));
     }
-
 
     // Update is called once per frame
     void Update()

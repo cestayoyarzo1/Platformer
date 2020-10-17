@@ -23,6 +23,16 @@ public class CharacterController : MonoBehaviour
     {
         animatorController = GetComponentInChildren<Animator>();
         rBody = GetComponentInChildren<Rigidbody>();
+        EventManager.Instance.onBoardInteraction.AddListener(CommandReceived);
+    }
+
+    private void CommandReceived(GameObject sender, CustomEventArgs args)
+    {
+        if (args.BoardCommand.Equals("@SU1"))
+        {
+            print("UP pressed");
+        }
+        
     }
 
     // Update is called once per frame
