@@ -4,6 +4,8 @@ using UnityEngine;
 using System.IO.Ports;
 using System.Threading;
 using System;
+using UnityEngine.Networking;
+using Unity.Jobs.LowLevel.Unsafe;
 
 public class SerialHandler : MonoBehaviour
 {
@@ -37,7 +39,12 @@ public class SerialHandler : MonoBehaviour
 
                 if(data == 13)
                 {
-                    ProcessCommand(incoming.ToArray());
+                    //ProcessCommand(incoming.ToArray());
+                    Dispatcher.Invoke(() =>
+                    {
+                        ProcessCommand(incoming.ToArray());
+                    });
+
                     incoming.Clear();
                 }
                 else
@@ -52,15 +59,9 @@ public class SerialHandler : MonoBehaviour
     void ProcessCommand(byte[] array)
     {
         command = System.Text.Encoding.UTF8.GetString(array, 0, array.Length);
-        print(command);
+        //print(command);
         //EventManager.Instance.InvokeNative("onBoardInteraction", gameObject, new CustomEventArgs(command));
         EventManager.Instance.onBoardInteraction.Invoke(gameObject, new CustomEventArgs(command));
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
 }
