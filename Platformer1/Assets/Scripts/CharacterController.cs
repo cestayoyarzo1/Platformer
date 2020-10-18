@@ -55,10 +55,8 @@ public class CharacterController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        movement = Input.GetAxis("Horizontal")/* + Mathf.SmoothStep (0,  mmovement2, 700 *Time.deltaTime)*/;
-
-        
-
+        movement = Input.GetAxis("Horizontal") + Mathf.SmoothStep (0,  mmovement2, 700 *Time.deltaTime);
+      
         switch (mainState)
         {
             case CharacterState.Idle:
@@ -154,7 +152,7 @@ public class CharacterController : MonoBehaviour
         if(!grounded && collision.transform.tag.Equals("Ground"))
         {
             grounded = true;
-            //transform.SetParent(collision.transform);
+            transform.SetParent(collision.transform.root);
         }
 
     }
@@ -164,7 +162,11 @@ public class CharacterController : MonoBehaviour
         if (grounded)
         {
             grounded = false;
-            //transform.SetParent(null);
+            transform.SetParent(null);
+            if (mainState != CharacterState.Jumping)
+            {
+                Stop();
+            }
         }
     }
 
@@ -237,7 +239,7 @@ public class CharacterController : MonoBehaviour
     {
         if(movement > 0)
         {
-            if (mainState != CharacterState.RunningForward)
+            if (mainState != CharacterState.RunningForward && grounded)
             {
                 mainState = CharacterState.RunningForward;
                 animatorController.SetBool("Run", true);
@@ -247,7 +249,7 @@ public class CharacterController : MonoBehaviour
         }
         else if ((movement < 0))
         {
-            if (mainState != CharacterState.RunningBack)
+            if (mainState != CharacterState.RunningBack && grounded)
             {
                 mainState = CharacterState.RunningBack;
                 animatorController.SetBool("Run", true);
@@ -259,13 +261,16 @@ public class CharacterController : MonoBehaviour
 
     void Jump()
     {
-        grounded = false;
-        prevState = mainState;
-        mainState = CharacterState.Jumping;
-        animatorController.SetBool("Run", false);
-        animatorController.SetBool("Stop", false);
-        animatorController.SetBool("Jump", true);
-        
+        if (mainState != CharacterState.Jumping)
+        {
+            grounded = false;
+            prevState = mainState;
+            mainState = CharacterState.Jumping;
+            animatorController.SetBool("Run", false);
+            animatorController.SetBool("Stop", false);
+            animatorController.SetBool("Jump", true);
+        }
+
     }
 
     //Method that handles the rpesses from the board, via Events

@@ -19,7 +19,7 @@ public class SerialHandler : MonoBehaviour
     [SerializeField]
     string command;
 
-    void Start()
+    private void Awake()
     {
         portsNames = SerialPort.GetPortNames();
         comPort = new SerialPort("COM24", 115200);
@@ -27,6 +27,47 @@ public class SerialHandler : MonoBehaviour
         serialThread = new Thread(ProcessSerial);
         serialThread.Start();
         incoming = new List<byte>();
+    }
+
+
+    void Start()
+    {
+        if(!comPort.IsOpen)
+        {
+            portsNames = SerialPort.GetPortNames();
+            comPort = new SerialPort("COM24", 115200);
+            comPort.Open();
+            serialThread = new Thread(ProcessSerial);
+            serialThread.Start();
+        }
+
+        
+    }
+
+    private void OnDestroy()
+    {
+        if(comPort.IsOpen)
+        {
+            comPort.Close();
+        }
+    }
+
+    private void Update()
+    {
+
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            Debug.Log("Tring to open serial port");
+            if (!comPort.IsOpen || comPort == null)
+            {
+                portsNames = SerialPort.GetPortNames();
+                comPort = new SerialPort("COM24", 115200);
+                comPort.Open();
+                serialThread = new Thread(ProcessSerial);
+                serialThread.Start();
+            }
+        }
+
     }
 
     private void ProcessSerial(object obj)
