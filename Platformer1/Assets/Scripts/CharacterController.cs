@@ -119,24 +119,28 @@ public class CharacterController : MonoBehaviour
                 break;
 
             case CharacterState.Jumping:
-                transform.position = new Vector3(transform.position.x, transform.position.y, 0);
-                if (prevState == CharacterState.RunningForward)
+                if (prevState == CharacterState.RunningForward && !grounded)
                 {
                     transform.localRotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 90, 0), rotationSpeed * Time.deltaTime);
                     movement = Mathf.Clamp(movement, -0.1f, movement);
                     transform.Translate(Vector3.forward * speed * movement * Time.deltaTime);
                 }
-                else if (prevState == CharacterState.RunningBack)
+                else if (prevState == CharacterState.RunningBack && !grounded)
                 {
                     transform.localRotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, -90, 0), rotationSpeed * Time.deltaTime);
                     movement = Mathf.Clamp(movement, movement, 0.1f);
                     transform.Translate(-Vector3.forward * speed * movement * Time.deltaTime);
                 }
-                if (Mathf.Abs(movement) <= deltaMove && grounded)
+                else if (Mathf.Abs(movement) <= deltaMove && grounded)
                 {
                     StartCoroutine("SmoothStop");
                     //Stop();
                 }
+                else
+                {
+                    StartCoroutine("SmoothRun");
+                }
+                transform.position = new Vector3(transform.position.x, transform.position.y, 0);
                 break;
 
             default:
@@ -164,9 +168,19 @@ public class CharacterController : MonoBehaviour
         }
     }
 
-   
-   
+
+
     //State transitions 
+    IEnumerator SmoothRun()
+    {
+        yield return new WaitForSeconds(0.05f);
+        if (grounded)
+        {
+            print("Smooth Run is called");
+            Run();
+        }
+
+    }
 
     IEnumerator SmoothStop()
     {
