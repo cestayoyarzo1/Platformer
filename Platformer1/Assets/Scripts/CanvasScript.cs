@@ -71,6 +71,7 @@ public class CanvasScript : MonoBehaviour
         else
         {
             baudRateDropdown.gameObject.SetActive(false);
+            connect.gameObject.SetActive(false);
         }
     }
 }
