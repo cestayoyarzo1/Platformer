@@ -38,7 +38,7 @@ public class LedActivator : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        state ^= 1;
+        StartCoroutine("ToggleState");
         itemLight.intensity = state * onIntensity;
         if (state == 1)
         {
@@ -52,45 +52,10 @@ public class LedActivator : MonoBehaviour
         }
     }
 
-
-    //private void OnCollisionEnter(Collision collision)
-    //{
-    //    collisionActive = true;
-    //    //StartCoroutine("ProcessLight");
-    //    //print("colliding!");
-    //}
-
-    //private void OnCollisionStay(Collision collision)
-    //{
-    //    collisionActive = true;
-    //}
-
-    //private void OnCollisionExit(Collision collision)
-    //{
-    //    collisionActive = false;
-    //}
-
-
-
-
-    //IEnumerator ProcessLight()
-    //{
-    //    yield return new WaitForSeconds(0.5f);
-    //    if(collisionActive)
-    //    {
-    //        state ^= 1;
-    //        itemLight.intensity = state * onIntensity;
-    //        if (state == 1)
-    //        {
-    //            halo.SetActive(true);
-    //            transform.localScale = new Vector3(0.04f, yScaleON, 0.04f);
-    //        }
-    //        else
-    //        {
-    //            halo.SetActive(false);
-    //            transform.localScale = new Vector3(0.04f, yScaleOFF, 0.04f);
-    //        }
-    //    }
-    //}
+    IEnumerator ToggleState()
+    {
+        yield return new WaitForSeconds(2f);
+        state ^= 1;
+    }
 
 }
