@@ -9,7 +9,8 @@ using Unity.Jobs.LowLevel.Unsafe;
 
 public class SerialHandler : MonoBehaviour
 {
-
+    [SerializeField]
+    string comPortName;
     SerialPort comPort;
     [SerializeField]
     string[] portsNames;
@@ -22,32 +23,44 @@ public class SerialHandler : MonoBehaviour
     private void Awake()
     {
         portsNames = SerialPort.GetPortNames();
-        comPort = new SerialPort("COM24", 115200);
-        comPort.Open();
-        serialThread = new Thread(ProcessSerial);
-        serialThread.Start();
         incoming = new List<byte>();
+        serialThread = new Thread(ProcessSerial);
     }
 
+    private void TryOpenPort(GameObject sender, CustomEventArgs args)
+    {
+        SerialPort tempPort = new SerialPort(args.PortName, args.BaudRate);
+        try
+        {
+            if (!tempPort.IsOpen)
+            {
+                comPort = tempPort;
+                comPort.Open();
+                comPortName = comPort.PortName;
+                serialThread = new Thread(ProcessSerial);
+                serialThread.Start();
+                EventManager.Instance.onPortOpenResult.Invoke(gameObject, new CustomEventArgs(true));
+            }
+        }
+        catch (Exception)
+        {
+
+            EventManager.Instance.onPortOpenResult.Invoke(gameObject, new CustomEventArgs(false));
+        }
+
+    }
 
     void Start()
     {
-        if(!comPort.IsOpen)
-        {
-            portsNames = SerialPort.GetPortNames();
-            comPort = new SerialPort("COM24", 115200);
-            comPort.Open();
-            serialThread = new Thread(ProcessSerial);
-            serialThread.Start();
-        }
-
-        
+        DontDestroyOnLoad(gameObject);
+        EventManager.Instance.onPortTryOpen.AddListener(TryOpenPort);
     }
 
     private void OnDestroy()
     {
-        if(comPort.IsOpen)
-        {
+        if(comPort != null && comPort.IsOpen)
+        {         
+            serialThread.Abort();
             comPort.Close();
         }
     }
@@ -96,12 +109,10 @@ public class SerialHandler : MonoBehaviour
         }
     }
 
-
     void ProcessCommand(byte[] array)
     {
         command = System.Text.Encoding.UTF8.GetString(array, 0, array.Length);
-        //print(command);
-        //EventManager.Instance.InvokeNative("onBoardInteraction", gameObject, new CustomEventArgs(command));
+        print(command);
         EventManager.Instance.onBoardInteraction.Invoke(gameObject, new CustomEventArgs(command));
     }
 

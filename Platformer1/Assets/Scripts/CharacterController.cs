@@ -23,6 +23,9 @@ public class CharacterController : MonoBehaviour
     };
     ButtonState upButtonm, downButton, leftButton, midButton, rightButton;
 
+
+    
+
     [SerializeField]
     bool grounded;
 
@@ -55,8 +58,13 @@ public class CharacterController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(transform.position.y < -5)
+        {
+            EventManager.Instance.onGameEnd.Invoke(gameObject, new CustomEventArgs(false));
+        }
+
+
         movement = Input.GetAxis("Horizontal") + Mathf.SmoothStep (0,  mmovement2, 700 *Time.deltaTime);
-      
         switch (mainState)
         {
             case CharacterState.Idle:

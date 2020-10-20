@@ -20,6 +20,9 @@ public class EventManager : Singleton<EventManager>
     public CustomUnityEvent onPointerUp { get; set; }
     public CustomUnityEvent onPointerClick { get; set; }
     public CustomUnityEvent onBoardInteraction { get; set; }
+    public CustomUnityEvent onPortTryOpen { get; set; }
+    public CustomUnityEvent onPortOpenResult { get; set; }
+    public CustomUnityEvent onGameEnd { get; set; }
 
     //Native C# events
 
@@ -27,12 +30,14 @@ public class EventManager : Singleton<EventManager>
     public delegate void CustomEvent(GameObject sender, CustomEventArgs args);
 
     //Events
-    public event CustomEvent onPointerEnterNative;
-    public event CustomEvent onPointerExitNative;
-    public event CustomEvent onPointerDownNative;
-    public event CustomEvent onPointerUpNative;
-    public event CustomEvent onPointerClickNative;
-    
+    //public event CustomEvent onPointerEnterNative;
+    //public event CustomEvent onPointerExitNative;
+    //public event CustomEvent onPointerDownNative;
+    //public event CustomEvent onPointerUpNative;
+    //public event CustomEvent onPointerClickNative;
+    //public event CustomEvent onPortTryOpen;
+    //public event CustomEvent onPortOpenResult;
+
     //public event CustomEvent onBoardInteraction;    //Event added for detecting board commands
 
 
@@ -53,7 +58,7 @@ public class EventManager : Singleton<EventManager>
     public EventManager()
     {
         //change this line for making the object persistent
-        _SingletonType = SingletonType.NonPersitent;
+        _SingletonType = SingletonType.Persistent;
     }
 
     private void Awake()
@@ -64,19 +69,22 @@ public class EventManager : Singleton<EventManager>
         onPointerUp = new CustomUnityEvent();
         onPointerClick = new CustomUnityEvent();
         onBoardInteraction = new CustomUnityEvent();
-
-
+        onPortTryOpen = new CustomUnityEvent();
+        onPortOpenResult = new CustomUnityEvent();
+        onGameEnd = new CustomUnityEvent();
         Beacon();//Print a message on the consolo to show the EventManager has been created
     }
 
     private void Start()
     {
         customEvents = new Dictionary<string, CustomEvent>();
-        customEvents.Add(nameof(onPointerEnterNative), onPointerEnterNative);
-        customEvents.Add(nameof(onPointerExitNative), onPointerExitNative);
-        customEvents.Add(nameof(onPointerDownNative), onPointerDownNative);
-        customEvents.Add(nameof(onPointerUpNative), onPointerUpNative);
-        customEvents.Add(nameof(onPointerClickNative), onPointerClickNative);
+        //customEvents.Add(nameof(onPointerEnterNative), onPointerEnterNative);
+        //customEvents.Add(nameof(onPointerExitNative), onPointerExitNative);
+        //customEvents.Add(nameof(onPointerDownNative), onPointerDownNative);
+        //customEvents.Add(nameof(onPointerUpNative), onPointerUpNative);
+        //customEvents.Add(nameof(onPointerClickNative), onPointerClickNative);
+        //customEvents.Add(nameof(onPortTryOpen), onPortTryOpen);
+        //customEvents.Add(nameof(onPortOpenResult), onPortOpenResult);
     }
 
     public void Beacon()
@@ -97,11 +105,11 @@ public class EventManager : Singleton<EventManager>
         onBoardInteraction.RemoveAllListeners();
 
         //Native C# events unsubscribe
-        UnsubscribeAll(onPointerEnterNative);
-        UnsubscribeAll(onPointerExitNative);
-        UnsubscribeAll(onPointerDownNative);
-        UnsubscribeAll(onPointerUpNative);
-        UnsubscribeAll(onPointerClickNative);
+        //UnsubscribeAll(onPointerEnterNative);
+        //UnsubscribeAll(onPointerExitNative);
+        //UnsubscribeAll(onPointerDownNative);
+        //UnsubscribeAll(onPointerUpNative);
+        //UnsubscribeAll(onPointerClickNative);
     }
 
     void UnsubscribeAll(CustomEvent eventItem)
