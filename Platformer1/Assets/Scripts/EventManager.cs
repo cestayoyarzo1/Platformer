@@ -23,6 +23,7 @@ public class EventManager : Singleton<EventManager>
     public CustomUnityEvent onPortTryOpen { get; set; }
     public CustomUnityEvent onPortOpenResult { get; set; }
     public CustomUnityEvent onGameEnd { get; set; }
+    public CustomUnityEvent onLedActivator { get; set; }
 
     //Native C# events
 
@@ -72,6 +73,7 @@ public class EventManager : Singleton<EventManager>
         onPortTryOpen = new CustomUnityEvent();
         onPortOpenResult = new CustomUnityEvent();
         onGameEnd = new CustomUnityEvent();
+        onLedActivator = new CustomUnityEvent();
         Beacon();//Print a message on the consolo to show the EventManager has been created
     }
 

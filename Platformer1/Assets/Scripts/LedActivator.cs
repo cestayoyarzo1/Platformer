@@ -20,6 +20,11 @@ public class LedActivator : MonoBehaviour
     [SerializeField]
     bool collisionActive;
 
+    [SerializeField]
+    char ledInitial;
+    [SerializeField]
+    string command;
+
 
     void Start()
     {
@@ -38,23 +43,34 @@ public class LedActivator : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        StartCoroutine("ToggleState");
-        itemLight.intensity = state * onIntensity;
-        if (state == 1)
+        
+        if(other.CompareTag("Player"))
         {
-            halo.SetActive(true);
-            transform.localScale = new Vector3(0.04f, yScaleON, 0.04f);
-        }
-        else
-        {
-            halo.SetActive(false);
-            transform.localScale = new Vector3(0.04f, yScaleOFF, 0.04f);
+            command = string.Empty;
+            StartCoroutine("ToggleState");
+            itemLight.intensity = state * onIntensity;
+            command += ledInitial;
+            if (state == 1)
+            {
+                halo.SetActive(true);
+                transform.localScale = new Vector3(0.04f, yScaleON, 0.04f);
+                command += '1';
+            }
+            else
+            {
+                halo.SetActive(false);
+                transform.localScale = new Vector3(0.04f, yScaleOFF, 0.04f);
+                command += '0';
+            }
+            command += '\r';
+            print(command);
+            EventManager.Instance.onLedActivator.Invoke(gameObject, new CustomEventArgs(command));
         }
     }
 
     IEnumerator ToggleState()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.5f);
         state ^= 1;
     }
 

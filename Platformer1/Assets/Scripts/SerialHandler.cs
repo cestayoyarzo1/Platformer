@@ -54,6 +54,12 @@ public class SerialHandler : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
         EventManager.Instance.onPortTryOpen.AddListener(TryOpenPort);
+        EventManager.Instance.onLedActivator.AddListener(LedFeedback);
+    }
+
+    private void LedFeedback(GameObject arg0, CustomEventArgs arg1)
+    {
+        comPort.Write(arg1.BoardCommand);
     }
 
     private void OnDestroy()

@@ -28,6 +28,7 @@ public class MenuScript : MonoBehaviour
         losePanel.SetActive(false);
         EventManager.Instance.onGameEnd.AddListener(GameEnd);
         Time.timeScale = 1;
+        EventManager.Instance.onLedActivator.Invoke(gameObject, new CustomEventArgs("P0\r"));
     }
 
     private void GameEnd(GameObject arg0, CustomEventArgs arg1)
